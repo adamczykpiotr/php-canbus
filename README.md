@@ -1,13 +1,7 @@
 # PHP-CanBus Extension
 
-PHP-CanBus is THE extension for PHP on Linux that allows PHP code to interface efficiently with a Controller Area Network (CAN bus) 2.0A / 2.0B. 
-As CAN Frames consist only of 8 bytes, using methods like parsing `shell_exec('candump vcan0 -n 1')` output has hughe drawbacks - it supports only blocking mode 
-and is really really slow. Performance is a key aspect as most use-cases of CAN-Bus are in embedded systems. With this extension you can efficiently control your 
-car, elevator or even aeorplane.
-
-
-
-:star: If you found this repo helpful, give it a star!
+PHP-canbus is THE extension for PHP on Linux that allows PHP code to interface efficiently with a Controller Area Network (CAN bus) 2.0A / 2.0B.
+As CAN Frames consist only of 8 bytes, using methods like parsing `shell_exec('can dump vcan0 -n 1')` output has huge drawbacks - it supports only blocking mode and is really really slow. Performance is a key aspect as most use-cases of CAN-Bus is in embedded systems. With this extension you can efficiently control your car, elevator or even airplane.
 
 ## Table of content
 - [Basics](#basics)
@@ -15,6 +9,7 @@ car, elevator or even aeorplane.
     - [Examples](#examples)
 - [Building](#building)
 - [Installation](#installation)
+- [TODOs](#todos)
 - [Links](#links)
 
 ## Basics
@@ -111,6 +106,34 @@ var_dump($canFrame);
 ?>
 ```
 
+### Building
+Download latest php-dev package (as the time of writing: `sudo apt install php8.1-dev`).
+
+Then run following commands inside repo directory:
+```
+phpize              # configures extension for your PHP version
+./configure         # configures extension details
+make                # builds extension
+make install        # installs extension in your system
+```
+
+### Installation
+- Find out path to your php.ini file by running `php -i | grep "Configuration File (php.ini) Path"`
+    - It should be something like `/etc/php/8.0/cli`
+- Open php.ini file it in text editor (ex. `sudo nano /etc/php/8.0/cli/php.ini`)
+    - As it might be in write-restricted path, use sudo 
+- Find `Dynamic Extensions` section (around line 900)
+- If you previously used `make install`, add line `extension=canbus`
+    - Otherwise, add `extension=/home/pi/canbus.so` where `/home/pi/canbus.so` is an extension path
+
+## TODOs
+- [x] Connecting to unix socket
+- [x] Extension skeleton 
+- [x] Listening
+    - [x] Blocking
+    - [x] Non-blocking
+    - [ ] Socket-based filtering
+- [ ] Sending
 
 ## Links
 * [CAN-Bus wikipedia](https://en.wikipedia.org/wiki/CAN_bus)
