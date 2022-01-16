@@ -1,0 +1,7 @@
+ARG_ENABLE('canbus', 'canbus support', 'no');
+
+if (PHP_CANBUS != 'no') {
+	AC_DEFINE('HAVE_CANBUS', 1, 'canbus support enabled');
+
+	EXTENSION('canbus', 'canbus.c', null, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+}
