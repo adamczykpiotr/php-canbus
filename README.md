@@ -11,11 +11,106 @@ car, elevator or even aeorplane.
 
 ## Table of content
 - [Basics](#basics)
-    - [Usage](#usage)
-    - [Example](#example)
+    - [Classes & methods](#classes-and-methods)
+    - [Examples](#examples)
 - [Building](#building)
 - [Installation](#installation)
 - [Links](#links)
+
+## Basics
+### Classes and methods
+```php
+<?php
+class CanBus {
+
+    /**
+     * CanBus constructor.
+     *
+     * @param string $interface non-empty string
+     */
+    public function __construct(string $interface)
+
+    /**
+     * Initializes CanBus interface and connects to unix sockets
+     * If socket was initialized before, it closes previous connection
+     *
+     * @param bool $blocking Whether interface should be blocking or not
+     * @return bool success/failure
+     */
+    public function init(bool $blocking = true): bool
+
+    /**
+     * Attempts to read single CanFrame.
+     *
+     * @return CanFrame|false CanFrame on success, false on failure
+     */
+    public function read(): CanFrame|false {}
+
+    /**
+     * Generates random CanFrame
+     * ID: 0 tp 0x7FF
+     * Length: 0 to 8
+     * Data: 0 to 8 bytes of values in range of 0 to 0xFF (0-255)
+     *
+     * @return CanFrame
+     */
+    public function generateRandomFrame(): CanFrame
+}
+
+class CanFrame {
+
+    /**
+     * CanFrame constructor.
+     *
+     * @param int $index value in range o 0 to 0x7FFFFFFF (CAN 2.0B)
+     * @param array $data 0 to 8 bytes of values in range of 0 to 0xFF (0-255)
+     */
+    public function __construct(int $index, array $data)
+}
+```
+
+### Examples
+
+Listening:
+```php
+<?php
+
+//Create new CanBus interface object
+$canBus = new CanBus('vcan0');
+
+//Initialize interface (connect to unix socket)
+if($canBus->init() === false) {
+    //Handle error
+}
+
+//Read loop
+while(true) {
+    $frame = $canBus->read();
+    if($frame === false) continue;
+    
+    //Do something with the frame
+}
+
+?>
+```
+
+Testing:
+```php
+<?php
+
+//Create new CanBus interface object
+$canBus = new CanBus('vcan0');
+$randomCanFrame = $canBus->generateRandomFrame();
+var_dump($randomCanFrame);
+
+$canFrame = new CanFrame(
+    0x204, //Id
+    [0x00, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08] //Data
+);
+var_dump($canFrame);
+?>
+```
+
 
 ## Links
 * [CAN-Bus wikipedia](https://en.wikipedia.org/wiki/CAN_bus)
