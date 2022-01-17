@@ -87,8 +87,6 @@ while(true) {
     
     //Do something with the frame
 }
-
-?>
 ```
 
 Testing:
@@ -105,7 +103,6 @@ $canFrame = new CanFrame(
     [0x00, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08] //Data
 );
 var_dump($canFrame);
-?>
 ```
 
 ### Building
