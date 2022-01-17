@@ -134,6 +134,7 @@ make install        # installs extension in your system
     - [x] Non-blocking
     - [ ] Socket-based filtering
 - [ ] Sending
+- [ ] More detailed tests
 
 ## Links
 * [CAN-Bus wikipedia](https://en.wikipedia.org/wiki/CAN_bus)
