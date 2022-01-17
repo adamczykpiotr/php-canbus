@@ -15,6 +15,13 @@
 #include <unistd.h>         //read, close
 #include <fcntl.h>          //fcntl
 
+/* For compatibility with older PHP versions */
+#ifndef ZEND_PARSE_PARAMETERS_NONE
+#define ZEND_PARSE_PARAMETERS_NONE() \
+    ZEND_PARSCE_PARAMETERS_START(0, 0) \
+    ZEND_PARSE_PARAMETERS_END()
+#endif
+
 //Defines for easy class member access
 #define CANBUS_INTERFACE_P OBJ_PROP_NUM(Z_OBJ_P(ZEND_THIS), 0)
 #define CANBUS_SOCKFD_P OBJ_PROP_NUM(Z_OBJ_P(ZEND_THIS), 1)
@@ -109,6 +116,11 @@ PHP_METHOD(CanBus, init) {
 /* {{{ CanBus read single frame method */
 PHP_METHOD(CanBus, read) {
     struct can_frame canFrame;
+
+    //This method doesn't need any 
+    ZEND_PARSE_PARAMETERS_NONE();
+    
+    //Get socket file descriptor
     zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
 
     //Try to read CAN frame
@@ -144,9 +156,50 @@ PHP_METHOD(CanBus, read) {
 }
 /* }}} */
 
+
+/* {{{ CanBus send single frame method */
+PHP_METHOD(CanBus, send) {
+    zval* object;
+
+    //Parse arguments
+    ZEND_PARSE_PARAMETERS_START(1, 1)
+        Z_PARAM_OBJECT_OF_CLASS(object, canFrame_ce)
+    ZEND_PARSE_PARAMETERS_END();
+
+    //Get HashTable
+    HashTable* canFrameData = Z_ARRVAL_P(CANFRAME_DATA_P(object));
+ 
+    //Create can_frame struct
+    struct can_frame canFrame;
+
+    //Assign id & data length
+    canFrame.can_id = Z_LVAL_P(CANFRAME_ID_P(object));
+    canFrame.can_dlc = zend_hash_num_elements(canFrameData);
+
+    //Assign data array
+    zval* temp;
+    zend_long i = 0;
+    ZEND_HASH_FOREACH_VAL(canFrameData, temp) {
+        canFrame.data[i++] = Z_LVAL_P(temp);
+    } ZEND_HASH_FOREACH_END();
+
+    //Get socket file descriptior
+    zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
+   
+    //Write data to socket
+    zend_long bytesWritten = write(sockFd, &canFrame, sizeof(canFrame));
+
+    //Return success or failure
+    RETURN_BOOL(bytesWritten == sizeof(canFrame));
+}
+/* }}} */
+
 /* {{{ CanBus generate random frame */
 PHP_METHOD(CanBus, generateRandomFrame) {
     zend_object *object = zend_objects_new(canFrame_ce);
+
+    //This method doesn't need any params
+    ZEND_PARSE_PARAMETERS_NONE();
 
     zval frame;
     ZVAL_OBJ(&frame, object);

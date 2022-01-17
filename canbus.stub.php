@@ -9,6 +9,7 @@ class CanBus {
     public function __construct(string $interface) {}
     public function init(bool $blocking = true): bool {}
     public function read(): CanFrame|false {}
+    public function send(CanFrame $frame): bool {}
     public function generateRandomFrame(): CanFrame {}
 }
 
