@@ -2,7 +2,7 @@
 
 PHP-canbus is THE extension for PHP on Linux that allows PHP code to interface efficiently with a Controller Area Network (CAN bus) 2.0A / 2.0B.
 
-As CAN Frames consist only of 11/29 bit identifier 8 data bytes and flags, using methods like parsing `shell_exec('candump vcan0 -n 1')` output has huge drawbacks - it supports only blocking mode and is really really slow. Performance is often a key aspect as most use-cases of CAN-Bus is in embedded systems. With this extension you can efficiently control your car, elevator or even airplane. 
+Due to the CAN Frames lightweight nature (they consist only of 11 or 29 bit identifier, 0 to 8 data bytes and flags) using methods like parsing `shell_exec('candump vcan0 -n 1')` output has huge drawbacks - it supports only blocking mode and is really really slow. Performance is often a key aspect as most use-cases of CAN-Bus is in embedded systems. With this extension you can efficiently control your car, elevator or even airplane.
 
 Development & testing was done on Raspberry Pi 4B + MCP2515/TJA1050 module.
 
@@ -18,7 +18,6 @@ Development & testing was done on Raspberry Pi 4B + MCP2515/TJA1050 module.
 ## Basics
 ### Classes and methods
 ```php
-<?php
 class CanBus {
 
     /**
@@ -42,12 +41,18 @@ class CanBus {
      *
      * @return CanFrame|false CanFrame on success, false on failure
      */
-    public function read(): CanFrame|false {}
+    public function read(): CanFrame|false
+    
+    /**
+     * Attempts to send single CanFrame.
+     *
+     * @return bool success/failure
+     */
+    public function send(CanFrame $frame): bool
 
     /**
      * Generates random CanFrame
-     * ID: 0 tp 0x7FF
-     * Length: 0 to 8
+     * ID: 0 to 0x7FF
      * Data: 0 to 8 bytes of values in range of 0 to 0xFF (0-255)
      *
      * @return CanFrame
@@ -90,15 +95,43 @@ while(true) {
 }
 ```
 
+Sending:
+```php
+<?php
+
+//Create new CanBus interface object
+$canBus = new CanBus('vcan0');
+
+//Initialize interface (connect to unix socket)
+if($canBus->init() === false) {
+    //Handle error
+}
+
+//Create new frame
+$canFrame = new CanFrame(
+    0x204,
+    [0x00, 0x02, 0x01]
+);
+
+//Send new frame
+if($canBus->send($canFrame) === false) {
+    //Handle error
+}
+
+```
+
 Testing:
 ```php
 <?php
 
 //Create new CanBus interface object
 $canBus = new CanBus('vcan0');
+
+//Generate random frame
 $randomCanFrame = $canBus->generateRandomFrame();
 var_dump($randomCanFrame);
 
+//Create new frame
 $canFrame = new CanFrame(
     0x204, //Id
     [0x00, 0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x08] //Data
@@ -133,7 +166,7 @@ make install        # installs extension in your system
     - [x] Blocking
     - [x] Non-blocking
     - [ ] Socket-based filtering
-- [ ] Sending
+- [x] Sending
 - [ ] More detailed tests
 
 ## Links
