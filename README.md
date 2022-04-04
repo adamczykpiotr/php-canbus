@@ -25,7 +25,7 @@ class CanBus {
      *
      * @param string $interface non-empty string
      */
-    public function __construct(string $interface)
+    public function __construct(string $interface) {}
 
     /**
      * Initializes CanBus interface and connects to unix sockets
@@ -34,21 +34,21 @@ class CanBus {
      * @param bool $blocking Whether interface should be blocking or not
      * @return bool success/failure
      */
-    public function init(bool $blocking = true): bool
+    public function init(bool $blocking = true): bool {}
 
     /**
      * Attempts to read single CanFrame.
      *
      * @return CanFrame|false CanFrame on success, false on failure
      */
-    public function read(): CanFrame|false
+    public function read(): CanFrame|false {}
     
     /**
      * Attempts to send single CanFrame.
      *
      * @return bool success/failure
      */
-    public function send(CanFrame $frame): bool
+    public function send(CanFrame $frame): bool {}
 
     /**
      * Generates random CanFrame
@@ -57,7 +57,7 @@ class CanBus {
      *
      * @return CanFrame
      */
-    public function generateRandomFrame(): CanFrame
+    public function generateRandomFrame(): CanFrame {}
 }
 
 class CanFrame {
@@ -68,7 +68,7 @@ class CanFrame {
      * @param int $index value in range o 0 to 0x7FFFFFFF (CAN 2.0B)
      * @param array $data 0 to 8 bytes of values in range of 0 to 0xFF (0-255)
      */
-    public function __construct(int $index, array $data)
+    public function __construct(int $index, array $data) {}
 }
 ```
 
