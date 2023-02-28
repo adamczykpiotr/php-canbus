@@ -1,14 +1,14 @@
 name: Build and Test
-on: [push, pull_request]
+on: [ push, pull_request ]
 jobs:
 
   build-job:
-    name: Build for PHP ${{ matrix.php-versions }}
+    name: Build for PHP ${{ matrix.php }}
     runs-on: ubuntu-22.04
 
     strategy:
       matrix:
-        php: ['8.0', '8.1', '8.2']
+        php: [ '8.0', '8.1', '8.2' ]
 
     steps:
       - name: OS - Install linux-can/can-utils
@@ -17,7 +17,7 @@ jobs:
       - name: OS - Install extra modules (vcan)
         run: sudo apt-get install -y linux-modules-extra-$(uname -r)
 
-      - name: OS - Load extra modules
+      - name: OS - Load extra modules (vcan)
         run: sudo modprobe vcan
 
 
@@ -30,7 +30,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           ini-values: error_reporting=-1, display_errors=On
-          coverage: none
+          tools: none
 
 
       - name: Extension - PHPize
