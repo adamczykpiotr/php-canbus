@@ -8,14 +8,11 @@ jobs:
 
     strategy:
       matrix:
-        php: ['8.0'] ##, '8.1', '8.2']
+        php: ['8.0', '8.1', '8.2']
 
     steps:
       - name: OS - Install linux-can/can-utils
         run: sudo apt install -y can-utils
-            #
-            #      - name: Install DKMS
-            #        run: sudo apt install -y dkms
 
       - name: OS - Install extra modules (vcan)
         run: sudo apt-get install -y linux-modules-extra-$(uname -r)
@@ -34,6 +31,7 @@ jobs:
           php-version: ${{ matrix.php }}
           ini-values: error_reporting=-1, display_errors=On
           coverage: none
+
 
       - name: Extension - PHPize
         run: phpize
