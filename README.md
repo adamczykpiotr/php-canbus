@@ -162,16 +162,17 @@ make install        # installs extension in your system
   - Otherwise, add `extension=/home/pi/canbus.so` where `/home/pi/canbus.so` is an extension path
 
 ## TODOs
-- [x] Connecting to unix socket
 - [x] Extension skeleton
+- [x] Connecting to unix socket
 - [x] Listening
   - [x] Blocking
   - [x] Non-blocking
   - [ ] Socket-based filtering
 - [x] Sending
 - [ ] More detailed tests
+- [ ] Ensure no memory leaks
 - [ ] CAN-FD Support
-- [ ] CI for different PHP versions & architectures
+- [x] CI for different PHP versions
 
 ## Links
 * [CAN-Bus wikipedia](https:// en.wikipedia.org/wiki/CAN_bus)
