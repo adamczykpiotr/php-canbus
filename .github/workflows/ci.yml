@@ -27,20 +27,14 @@ jobs:
       - name: Configure extension
         run: ./configure --enable-canbus
 
-      - name: Update APT
-        run: sudo apt update -y
-
       - name: Install linux-can/can-utils
         run: sudo apt install -y can-utils
 
       - name: Install DKMS
         run: sudo apt install -y dkms
 
-      - name: Get vcan driver
-        run: sudo dkms install -m vcan
-
-      - name: Load vcan driver
-        run: sudo modprobe vcan
+      - name: Install kernel headers
+        run: sudo apt install linux-headers-$(uname -r)
 
       - name: make
         run: make
