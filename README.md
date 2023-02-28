@@ -1,6 +1,6 @@
 # PHP-CanBus Extension
 
-[![CodeFactor](https:// www.codefactor.io/repository/github/adamczykpiotr/php-canbus/badge)](https:// www.codefactor.io/repository/github/adamczykpiotr/php-canbus)
+[![CodeFactor](https://www.codefactor.io/repository/github/adamczykpiotr/php-canbus/badge)](https://www.codefactor.io/repository/github/adamczykpiotr/php-canbus)
 
 PHP-canbus is THE extension for PHP on Linux that allows PHP code to interface efficiently with a Controller Area Network (CAN bus) 2.0A / 2.0B.
 
