@@ -3,7 +3,7 @@ on: [ push, pull_request ]
 jobs:
 
   build-job:
-    name: Build for PHP ${{ matrix.php }}
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-22.04
 
     strategy:
