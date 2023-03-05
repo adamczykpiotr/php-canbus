@@ -10,10 +10,10 @@ $interfaceName = 'vcan0';
 $canBus = new CanBus($interfaceName);
 $canBus->init();
 
-//Send single frame
+// Send single frame
 system("cansend $interfaceName 123#12345678");
 
-//Dump frame
+// Dump frame
 var_dump(
     $canBus->read()
 );

@@ -9,11 +9,11 @@
 #include "php_canbus.h"
 #include "canbus_arginfo.h"
 
-#include <linux/can/raw.h>  //can_frame, masks
-#include <net/if.h>         //ifreq
-#include <sys/ioctl.h>      //ioctl, SIOCGIFINDEX
-#include <unistd.h>         //read, close
-#include <fcntl.h>          //fcntl
+#include <linux/can/raw.h>  // can_frame, masks
+#include <net/if.h>         // ifreq
+#include <sys/ioctl.h>      // ioctl, SIOCGIFINDEX
+#include <unistd.h>         // read, close
+#include <fcntl.h>          // fcntl
 
 /* For compatibility with older PHP versions */
 #ifndef ZEND_PARSE_PARAMETERS_NONE
@@ -22,7 +22,7 @@
     ZEND_PARSE_PARAMETERS_END()
 #endif
 
-//Defines for easy class member access
+// Defines for easy class member access
 #define CANBUS_INTERFACE_P OBJ_PROP_NUM(Z_OBJ_P(ZEND_THIS), 0)
 #define CANBUS_SOCKFD_P OBJ_PROP_NUM(Z_OBJ_P(ZEND_THIS), 1)
 
@@ -30,7 +30,7 @@
 #define CANFRAME_LENGTH_P(zv) OBJ_PROP_NUM(Z_OBJ_P(zv), 1) 
 #define CANFRAME_DATA_P(zv) OBJ_PROP_NUM(Z_OBJ_P(zv), 2 )
 
-//Class entries
+// Class entries
 zend_class_entry *canBus_ce = NULL;
 zend_class_entry *canFrame_ce = NULL;
 
@@ -38,17 +38,17 @@ zend_class_entry *canFrame_ce = NULL;
 PHP_METHOD(CanBus, __construct) {
     zend_string* interface;
 
-    //Parse arguments
+    // Parse arguments
     ZEND_PARSE_PARAMETERS_START(1, 1)
         Z_PARAM_STR(interface)
     ZEND_PARSE_PARAMETERS_END();
 
-    //Validate interface name
+    // Validate interface name
     if (ZSTR_LEN(interface) == 0) {
         php_error_docref(NULL, E_ERROR, "interface name cannot be empty");
     }
 
-    //Initialize $this->interface with provided name
+    // Initialize $this->interface with provided name
     ZVAL_STR_COPY(CANBUS_INTERFACE_P, interface);
 }
 /* }}} */
@@ -57,25 +57,25 @@ PHP_METHOD(CanBus, __construct) {
 PHP_METHOD(CanBus, init) {
     zend_bool blocking = true;
 
-    //Parse arguments
+    // Parse arguments
     ZEND_PARSE_PARAMETERS_START(0, 1)
         Z_PARAM_OPTIONAL
         Z_PARAM_BOOL(blocking)
     ZEND_PARSE_PARAMETERS_END();
 
-    //If socket file descriptor is set, close it before another initialization
+    // If socket file descriptor is set, close it before another initialization
     zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
     if(sockFd != -1) {
         close(sockFd);
     }
 
-    //Open CAN network interface
+    // Open CAN network interface
     sockFd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (sockFd == -1) {
         RETURN_FALSE;
     }
 
-    //Map CAN interface
+    // Map CAN interface
     struct ifreq ifr;
     zval* interface = CANBUS_INTERFACE_P;
     strncpy(ifr.ifr_name, Z_STRVAL(*interface), IFNAMSIZ);
@@ -83,7 +83,7 @@ PHP_METHOD(CanBus, init) {
         RETURN_FALSE;
     }
 
-    //Bind the socket to the network interface
+    // Bind the socket to the network interface
     struct sockaddr_can addr;
     addr.can_family = AF_CAN;
     addr.can_ifindex = ifr.ifr_ifindex;
@@ -91,22 +91,22 @@ PHP_METHOD(CanBus, init) {
         RETURN_FALSE;
     }
 
-    //Conditionaly set socket to non-blocking mode 
+    // Conditionaly set socket to non-blocking mode 
     if(!blocking) {
 
-        //Get flags
+        // Get flags
         int flags = fcntl(sockFd, F_GETFL, 0);
         if(flags == -1) {
             RETURN_FALSE;
         }
 
-        //Set non-blocking flag
+        // Set non-blocking flag
         if (fcntl(sockFd, F_SETFL, flags | O_NONBLOCK) == -1) {
             RETURN_FALSE;
         }
     }
 
-    //Update $this->sockFd file descriptor
+    // Update $this->sockFd file descriptor
     ZVAL_LONG(CANBUS_SOCKFD_P, sockFd);
 
     RETURN_TRUE;
@@ -117,41 +117,41 @@ PHP_METHOD(CanBus, init) {
 PHP_METHOD(CanBus, read) {
     struct can_frame canFrame;
 
-    //This method doesn't need any 
+    // This method doesn't need any 
     ZEND_PARSE_PARAMETERS_NONE();
     
-    //Get socket file descriptor
+    // Get socket file descriptor
     zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
 
-    //Try to read CAN frame
+    // Try to read CAN frame
     ssize_t numBytes = read(sockFd, &canFrame, CAN_MTU);
 
-    //Return false if whole frame could not be read
+    // Return false if whole frame could not be read
     if(numBytes != CAN_MTU) {
         RETURN_FALSE;
     }
 
-    //Create CanFrame object
+    // Create CanFrame object
     zend_object *object = zend_objects_new(canFrame_ce);
     zval frame;
     ZVAL_OBJ(&frame, object);
 
-    //Initialize $frame->id
+    // Initialize $frame->id
     ZVAL_LONG(CANFRAME_ID_P(&frame), canFrame.can_id);
     
-    //Initialize $frame->length
+    // Initialize $frame->length
     ZVAL_LONG(CANFRAME_LENGTH_P(&frame), canFrame.can_dlc);
 
-    //Initialize $frame->data
+    // Initialize $frame->data
     zval* data = CANFRAME_DATA_P(&frame);
     array_init_size(data, canFrame.can_dlc);
 
-    //fill $frame->data
+    // fill $frame->data
     for(int i = 0; i < canFrame.can_dlc; i++) {
         add_next_index_long(data, canFrame.data[i]);
     }
 
-    //Return CanFrame
+    // Return CanFrame
     RETURN_COPY(&frame);
 }
 /* }}} */
@@ -161,35 +161,35 @@ PHP_METHOD(CanBus, read) {
 PHP_METHOD(CanBus, send) {
     zval* object;
 
-    //Parse arguments
+    // Parse arguments
     ZEND_PARSE_PARAMETERS_START(1, 1)
         Z_PARAM_OBJECT_OF_CLASS(object, canFrame_ce)
     ZEND_PARSE_PARAMETERS_END();
 
-    //Get HashTable
+    // Get HashTable
     HashTable* canFrameData = Z_ARRVAL_P(CANFRAME_DATA_P(object));
  
-    //Create can_frame struct
+    // Create can_frame struct
     struct can_frame canFrame;
 
-    //Assign id & data length
+    // Assign id & data length
     canFrame.can_id = Z_LVAL_P(CANFRAME_ID_P(object));
     canFrame.can_dlc = zend_hash_num_elements(canFrameData);
 
-    //Assign data array
+    // Assign data array
     zval* temp;
     zend_long i = 0;
     ZEND_HASH_FOREACH_VAL(canFrameData, temp) {
         canFrame.data[i++] = Z_LVAL_P(temp);
     } ZEND_HASH_FOREACH_END();
 
-    //Get socket file descriptior
+    // Get socket file descriptior
     zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
    
-    //Write data to socket
+    // Write data to socket
     zend_long bytesWritten = write(sockFd, &canFrame, sizeof(canFrame));
 
-    //Return success or failure
+    // Return success or failure
     RETURN_BOOL(bytesWritten == sizeof(canFrame));
 }
 /* }}} */
@@ -198,13 +198,13 @@ PHP_METHOD(CanBus, send) {
 PHP_METHOD(CanBus, generateRandomFrame) {
     zend_object *object = zend_objects_new(canFrame_ce);
 
-    //This method doesn't need any params
+    // This method doesn't need any params
     ZEND_PARSE_PARAMETERS_NONE();
 
     zval frame;
     ZVAL_OBJ(&frame, object);
 
-    //Generate random can_frame;
+    // Generate random can_frame;
     struct can_frame canFrame;
     srand(time(NULL));
     canFrame.can_id = rand() % 0x7FF;
@@ -213,22 +213,22 @@ PHP_METHOD(CanBus, generateRandomFrame) {
         canFrame.data[i] = rand() % 0xFF;
     }
 
-    //Initialize $frame->id
+    // Initialize $frame->id
     ZVAL_LONG(CANFRAME_ID_P(&frame), canFrame.can_id);
     
-    //Initialize $frame->length
+    // Initialize $frame->length
     ZVAL_LONG(CANFRAME_LENGTH_P(&frame), canFrame.can_dlc);
 
-    //Initialize $frame->data
+    // Initialize $frame->data
     zval* data = CANFRAME_DATA_P(&frame);
     array_init_size(data, canFrame.can_dlc);
 
-    //Fill $frame->data
+    // Fill $frame->data
     for(int i = 0; i < canFrame.can_dlc; i++) {
         add_next_index_long(data, canFrame.data[i]);
     }
 
-    //Return CanFrame
+    // Return CanFrame
     RETURN_COPY(&frame);
 }
 /* }}} */
@@ -238,46 +238,46 @@ PHP_METHOD(CanFrame, __construct) {
     zend_long id;
     HashTable* data;
 
-    //Parse arguments
+    // Parse arguments
     ZEND_PARSE_PARAMETERS_START(2, 2)
         Z_PARAM_LONG(id)
         Z_PARAM_ARRAY_HT(data)
     ZEND_PARSE_PARAMETERS_END();
 
-    //Validate provided ID with CAN 2.0B standard (0 to 2^31 - 1)
+    // Validate provided ID with CAN 2.0B standard (0 to 2^31 - 1)
     if(id < 0 || id > 0x7FFFFFFF) {
         php_error_docref(NULL, E_ERROR, "parameter ID has to be in range of 0-0x7FFFFFFF");
     }
 
-    //Validate provided data has at most 8 elements
+    // Validate provided data has at most 8 elements
     zend_long dataLength = zend_hash_num_elements(data);
     if(dataLength > 8) {
         php_error_docref(NULL, E_ERROR, "data length has to be not greater than 8 elements");
     }
 
-    //Validate provided data constists only of zend_long in range of 0-255
+    // Validate provided data constists only of zend_long in range of 0-255
     zval* temp;
     ZEND_HASH_FOREACH_VAL(data, temp) {
-        //Validate type
+        // Validate type
         if(Z_TYPE_P(temp) != IS_LONG) {
             php_error_docref(NULL, E_ERROR, "data element has to be an int");
             continue;
         } 
 
-        //Validate value
+        // Validate value
         zend_long value = Z_LVAL_P(temp);
         if(value < 0 || value > 0xFF) {
             php_error_docref(NULL, E_ERROR, "data element value has to be in range od 0-0xFF");
         }
     } ZEND_HASH_FOREACH_END();
 
-    //Initialize $this->id with provided id
+    // Initialize $this->id with provided id
     ZVAL_LONG(CANFRAME_ID_P(ZEND_THIS), id);
 
-    //Make copy of passed input data & initialize $this->data
+    // Make copy of passed input data & initialize $this->data
     ZVAL_ARR(CANFRAME_DATA_P(ZEND_THIS), data);
 
-    //Initialize size of passed array
+    // Initialize size of passed array
     ZVAL_LONG(CANFRAME_LENGTH_P(ZEND_THIS), dataLength);
 }
 /* }}} */
@@ -286,18 +286,18 @@ PHP_METHOD(CanFrame, __construct) {
 static zend_class_entry *register_class_CanBus(void) {
     zend_class_entry ce, *classEntry;
 
-    //Register class
+    // Register class
     INIT_CLASS_ENTRY(ce, "CanBus", class_CanBus_methods);
     classEntry = zend_register_internal_class_ex(&ce, NULL);
 
-    //Register member: public string $id = undefined
+    // Register member: public string $id = undefined
     zval property_interface_default_value;
     ZVAL_UNDEF(&property_interface_default_value);
     zend_string *property_interface_name = zend_string_init("interface", strlen("interface"), true);
     zend_declare_typed_property(classEntry, property_interface_name, &property_interface_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
     zend_string_release(property_interface_name);
 
-    //Register member: protecte int $socketFd = -1
+    // Register member: protecte int $socketFd = -1
     zval property_socketFd_default_value;
     ZVAL_LONG(&property_socketFd_default_value, -1);
     zend_string *property_socketFd_name = zend_string_init("socketFd", strlen("socketFd"), true);
@@ -313,25 +313,25 @@ static zend_class_entry *register_class_CanBus(void) {
 static zend_class_entry *register_class_CanFrame(void) {
     zend_class_entry ce, *classEntry;
 
-    //Register class
+    // Register class
     INIT_CLASS_ENTRY(ce, "CanFrame", class_CanFrame_methods);
     classEntry = zend_register_internal_class(&ce);
 
-    //Register member: public int $id = 0
+    // Register member: public int $id = 0
     zval id;
     ZVAL_LONG(&id, 0);
     zend_string *idName = zend_string_init("id", strlen("id"), true);
     zend_declare_typed_property(classEntry, idName, &id, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
     zend_string_release(idName);
 
-    //Register member: public int $length = 0
+    // Register member: public int $length = 0
     zval length;
     ZVAL_LONG(&length, 0);
     zend_string *lengthName = zend_string_init("length", strlen("length"), true);
     zend_declare_typed_property(classEntry, lengthName, &length, ZEND_ACC_PUBLIC, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_LONG));
     zend_string_release(lengthName);
 
-    //Register member: public array $data = []
+    // Register member: public array $data = []
     zval data;
     ZVAL_EMPTY_ARRAY(&data);
     zend_string *dataName = zend_string_init("data", strlen("data"), true);

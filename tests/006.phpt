@@ -4,7 +4,7 @@ Test CanBus::send(CanFrame $frame)
 canbus
 --FILE--
 <?php
-//Create new CanFrame with 8 bytes
+// Create new CanFrame with 8 bytes
 $data = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08];
 $canFrame = new CanFrame(0x123, $data);
 
