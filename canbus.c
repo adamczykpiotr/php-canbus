@@ -152,7 +152,7 @@ PHP_METHOD(CanBus, read) {
     }
 
     // Return CanFrame
-    RETURN_COPY(&frame);
+    RETURN_ZVAL(&frame, 0, 0);
 }
 /* }}} */
 
@@ -229,7 +229,7 @@ PHP_METHOD(CanBus, generateRandomFrame) {
     }
 
     // Return CanFrame
-    RETURN_COPY(&frame);
+    RETURN_ZVAL(&frame, 0, 0);
 }
 /* }}} */
 
@@ -297,7 +297,7 @@ static zend_class_entry *register_class_CanBus(void) {
     zend_declare_typed_property(classEntry, property_interface_name, &property_interface_default_value, ZEND_ACC_PROTECTED, NULL, (zend_type) ZEND_TYPE_INIT_MASK(MAY_BE_STRING));
     zend_string_release(property_interface_name);
 
-    // Register member: protecte int $socketFd = -1
+    // Register member: protected int $socketFd = -1
     zval property_socketFd_default_value;
     ZVAL_LONG(&property_socketFd_default_value, -1);
     zend_string *property_socketFd_name = zend_string_init("socketFd", strlen("socketFd"), true);
