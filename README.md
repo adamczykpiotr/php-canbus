@@ -169,8 +169,8 @@ make install        # installs extension in your system
   - [x] Non-blocking
   - [ ] Socket-based filtering
 - [x] Sending
-- [ ] More detailed tests
-- [ ] Ensure no memory leaks
+- [x] More detailed tests
+- [x] Ensure no memory leaks
 - [ ] CAN-FD Support
 - [x] CI for different PHP versions
 
