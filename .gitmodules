@@ -1,0 +1,3 @@
+[submodule "linux-canbus-cpp"]
+	path = linux-canbus-cpp
+	url = https://github.com/adamczykpiotr/linux-canbus-cpp.git
