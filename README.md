@@ -175,15 +175,15 @@ make install        # installs extension in your system
 - [x] CI for different PHP versions
 
 ## Links
-* [CAN-Bus wikipedia](https:// en.wikipedia.org/wiki/CAN_bus)
-* [Linux CAN utils](https:// github.com/linux-can/can-utils)
-* [Raspberry PI + MCP2515](https:// forums.raspberrypi.com/viewtopic.php?t=141052), [Polish guide](http:// www.emvn.pl/can-bus-mcp2515-raspberrypi-socketcan/)
-* [How to write PHP exntesion by ZEND](https:// www.zend.com/resources/writing-php-extensions)
-* [PHP extension whitepaper](https:// www.zend.com/sites/zend/files/pdfs/whitepaper-zend-php-extensions.pdf)
-* [PHP internals book](https:// www.phpinternalsbook.com/)
-* [PHP Fast Parameter Parsing API](https:// wiki.php.net/rfc/fast_zpp) RFC From 2014, included in PHP 7.x (2015+)
-* [2011 PHP extension guide](https:// kchodorow.com/2011/08/11/php-extensions-made-eldrich-php-variables/),
-  [Archive](https:// web.archive.org/web/20210416205006/https:// kchodorow.com/2011/08/11/php-extensions-made-eldrich-php-variables/) (uses old parameter parsing api)
-* [Archive: 2005 PHP extension guide](http:// web.archive.org/web/20110222035803/http:// devzone.zend.com/article/1021) (uses old parameter parsing api)
-* [Archive: PHP Documentation on internals](https:// web.archive.org/web/20200501034044/https:// www.php.net/manual/en/internals2.php)
+* [CAN-Bus wikipedia](https://en.wikipedia.org/wiki/CAN_bus)
+* [Linux CAN utils](https://github.com/linux-can/can-utils)
+* [Raspberry PI + MCP2515](https://forums.raspberrypi.com/viewtopic.php?t=141052), [Polish guide](http://www.emvn.pl/can-bus-mcp2515-raspberrypi-socketcan/)
+* [How to write PHP exntesion by ZEND](https://www.zend.com/resources/writing-php-extensions)
+* [PHP extension whitepaper](https://www.zend.com/sites/zend/files/pdfs/whitepaper-zend-php-extensions.pdf)
+* [PHP internals book](https://www.phpinternalsbook.com/)
+* [PHP Fast Parameter Parsing API](https://wiki.php.net/rfc/fast_zpp) RFC From 2014, included in PHP 7.x (2015+)
+* [2011 PHP extension guide](https://kchodorow.com/2011/08/11/php-extensions-made-eldrich-php-variables/),
+  [Archive](https://web.archive.org/web/20210416205006/https://kchodorow.com/2011/08/11/php-extensions-made-eldrich-php-variables/) (uses old parameter parsing api)
+* [Archive: 2005 PHP extension guide](http://web.archive.org/web/20110222035803/http://devzone.zend.com/article/1021) (uses old parameter parsing api)
+* [Archive: PHP Documentation on internals](https://web.archive.org/web/20200501034044/https://www.php.net/manual/en/internals2.php)
 
