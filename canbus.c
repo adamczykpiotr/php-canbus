@@ -283,12 +283,8 @@ PHP_METHOD(CanFrame, __construct) {
 /* }}} */
 
 /* {{{ CanBus class registry */
-static zend_class_entry *register_class_CanBus(void) {
-    zend_class_entry ce, *classEntry;
-
-    // Register class
-    INIT_CLASS_ENTRY(ce, "CanBus", class_CanBus_methods);
-    classEntry = zend_register_internal_class_ex(&ce, NULL);
+static zend_class_entry *register_class_CanBus_with_members(void) {
+    zend_class_entry *classEntry = register_class_CanBus();
 
     // Register member: public string $id = undefined
     zval property_interface_default_value;
@@ -310,12 +306,8 @@ static zend_class_entry *register_class_CanBus(void) {
 /* }}} */
 
 /* {{{ CanFrame class registry */
-static zend_class_entry *register_class_CanFrame(void) {
-    zend_class_entry ce, *classEntry;
-
-    // Register class
-    INIT_CLASS_ENTRY(ce, "CanFrame", class_CanFrame_methods);
-    classEntry = zend_register_internal_class(&ce);
+static zend_class_entry *register_class_CanFrame_with_members(void) {
+    zend_class_entry *classEntry = register_class_CanFrame();
 
     // Register member: public int $id = 0
     zval id;
@@ -354,8 +346,8 @@ PHP_RINIT_FUNCTION(canbus){
 
  /*{{{ PHP_MINIT_FUNCTION */
 PHP_MINIT_FUNCTION(canbus) {
-    canBus_ce = register_class_CanBus();
-    canFrame_ce = register_class_CanFrame();
+    canBus_ce = register_class_CanBus_with_members();
+    canFrame_ce = register_class_CanFrame_with_members();
 
     return SUCCESS;
 }
