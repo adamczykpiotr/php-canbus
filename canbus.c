@@ -53,6 +53,15 @@ PHP_METHOD(CanBus, __construct) {
 }
 /* }}} */
 
+/* {{{ CanBus destructor */
+PHP_METHOD(CanBus, __destruct) {
+    zend_long sockFd = Z_LVAL_P(CANBUS_SOCKFD_P);
+    if(sockFd != -1) {
+        close(sockFd);
+    }
+}
+/* }}} */
+
 /* {{{ CanBus init method */
 PHP_METHOD(CanBus, init) {
     zend_bool blocking = true;
